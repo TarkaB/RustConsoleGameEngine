@@ -9,6 +9,7 @@ The library is not currently on crates.io, so to use it, do the following:
 - Drag `lib.rs` to your project and either keep it as 'lib' or rename it.
 - Add `win32console = "0.1.4"` and `winsafe = "0.0.5"` to your Cargo.toml. (update versions if necessary)
 
+You can also create a Cargo workspace if you prefer; do it however you like.
 ## Game Loop
 The following is an example of a set up routine:
 
