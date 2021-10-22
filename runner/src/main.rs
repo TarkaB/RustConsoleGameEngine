@@ -1,0 +1,3 @@
+use tetris;
+
+fn main() {}
