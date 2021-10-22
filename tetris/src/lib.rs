@@ -1,5 +1,6 @@
 // Unfinished Tetris demo based on Javidx9's implementation
 // Plenty of comments to help if I come back to it.
+// Add `[profile.dev] overflow-checks = false` to root Cargo to avoid annoying errors
 use engine::{
     input::{Key, Keyboard},
     render::{self, colour, Console, Pixel},
@@ -130,7 +131,7 @@ fn to_2d_index(x: usize, y: usize, array_width: usize) -> usize {
     y * array_width + x
 }
 
-fn main() {
+pub fn run() {
     // ENGINE SETUP //////////
     let mut console = Console::create(SCREEN_WIDTH, SCREEN_HEIGHT, 16, 16, "TETRIS")
         .expect("Could not create Console");
