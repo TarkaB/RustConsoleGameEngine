@@ -266,16 +266,16 @@ mod assets {
 
     pub const EMPTY: Pixel = render::PIXEL_EMPTY;
     pub const BORDER: Pixel = Pixel {
-        char_value: '#',
-        attributes: colour::FG_DARK_GREY,
+        char_value: 'O',
+        attributes: colour::FG_DARK_BLUE,
     };
     pub const PIECE_1: Pixel = Pixel {
         char_value: 'A',
-        attributes: colour::FG_RED,
+        attributes: colour::FG_DARK_RED,
     };
     pub const PIECE_2: Pixel = Pixel {
         char_value: 'B',
-        attributes: colour::FG_GREEN,
+        attributes: colour::FG_DARK_GREEN,
     };
     pub const PIECE_3: Pixel = Pixel {
         char_value: 'C',
