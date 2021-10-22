@@ -1,3 +1,5 @@
+// Unfinished Tetris demo based on Javidx9's implementation
+// Plenty of comments to help if I come back to it.
 use engine::{
     input::{Key, Keyboard},
     render::{self, colour, Console, Pixel},
@@ -5,7 +7,7 @@ use engine::{
 use rand::Rng;
 use std::{thread, time::Duration};
 
-const ASSETS: [Pixel; 10] = [
+const ASSETS: [Pixel; 9] = [
     assets::EMPTY,
     assets::PIECE_1,
     assets::PIECE_2,
@@ -14,12 +16,14 @@ const ASSETS: [Pixel; 10] = [
     assets::PIECE_5,
     assets::PIECE_6,
     assets::PIECE_7,
-    assets::SHADOW,
     assets::BORDER,
 ];
 
 const SCREEN_WIDTH: u16 = 80;
 const SCREEN_HEIGHT: u16 = 30;
+
+const DRAW_OFFSET_X: usize = 30;
+const DRAW_OFFSET_Y: usize = 6;
 
 const BOARD_WIDTH: usize = 12;
 const BOARD_HEIGHT: usize = 18;
@@ -30,6 +34,8 @@ const ONE_EIGHTY_DEGREES: usize = 2;
 const TWO_SEVENTY_DEGREES: usize = 3;
 
 const TETROMINOS: [[usize; 16]; 7] = [
+    // 0 represents empty space, non-zero represents a block,
+    // where the number represents an ASSETS index
     // Line
     [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0],
     // T
@@ -87,26 +93,29 @@ impl Piece {
     ) -> bool {
         for px in 0..4 {
             for py in 0..4 {
-                let current_pos_index = to_4x4_rotated_index(px, py, rotation);
-                let piece_index_value = self.piece_type[current_pos_index];
+                let index = to_4x4_rotated_index(px, py, rotation);
 
+                // Check within bounds
                 if (px + x < BOARD_WIDTH) && (py + y < BOARD_HEIGHT) {
-                    let new_pos_index = to_2d_index(px + x, py + y, BOARD_WIDTH);
+                    let new_index = to_2d_index(px + x, py + y, BOARD_WIDTH);
 
-                    let board_value = board[new_pos_index];
-
-                    if piece_index_value != 0 && board_value != 0 {
+                    // If the current piece index is a block, and the board index on the
+                    // index we want to move that index to is a block, then there's a collision.
+                    if self.piece_type[index] != 0 && board[new_index] != 0 {
                         return false;
                     }
                 }
             }
         }
 
+        // If no collisions are detected above, then it's all clear.
         true
     }
 }
 
 fn to_4x4_rotated_index(x: usize, y: usize, rotation: usize) -> usize {
+    // https://github.com/OneLoneCoder/videos/blob/master/OneLoneCoder_Tetris.cpp
+    // I sort of understand how this works; I can replicate it at different array sizes, at least
     let index = match rotation % 4 {
         ZERO_DEGREES => y * 4 + x,
         NINETY_DEGREES => 12 + y - (x * 4),
@@ -143,19 +152,19 @@ fn main() {
         for y in 0..BOARD_HEIGHT {
             let index = to_2d_index(x, y, BOARD_WIDTH);
 
+            // 0 = left border, BOARD_WIDTH - 1 = right border, and BOARD_HEIGHT - 1 = bottom border
             if x == 0 || x == BOARD_WIDTH - 1 || y == BOARD_HEIGHT - 1 {
-                board[index] = 9;
+                board[index] = 8; // 8 is the number for the border Pixel in the ASSETS array
             }
         }
     }
 
-    let mut game_active = true;
-
-    let mut piece = Piece::new();
-    let mut drop_interval = 20;
+    let drop_interval = 20;
     let mut counter = 0;
 
-    while game_active {
+    let mut piece = Piece::new();
+
+    loop {
         // TICK //////////
         thread::sleep(Duration::from_millis(45));
         counter += 1;
@@ -188,6 +197,8 @@ fn main() {
 
         // Drop the current piece
         if counter == drop_interval {
+            counter = 0;
+
             if !piece.does_fit(piece.pos_x, piece.pos_y + 1, piece.rotation, &board) {
                 // Lock the piece
                 for x in 0..4 {
@@ -202,19 +213,16 @@ fn main() {
                     }
                 }
 
-                // Increment score / Check for lines
-
                 // Generate new piece
                 piece = Piece::new();
 
                 // Game over
                 if !piece.does_fit(piece.pos_x, piece.pos_y, piece.rotation, &board) {
-                    game_active = false;
+                    std::process::exit(0);
                 }
+            } else {
+                piece.set_position(piece.pos_x, piece.pos_y + 1, &board);
             }
-
-            piece.set_position(piece.pos_x, piece.pos_y + 1, &board);
-            counter = 0;
         }
 
         // RENDER //////////
@@ -224,7 +232,10 @@ fn main() {
                 let index = to_2d_index(x, y, BOARD_WIDTH);
                 let board_value = board[index];
 
-                console.draw_pixel(x, y, &ASSETS[board_value]);
+                // Each number on the board array represents an index into the
+                // ASSETS array; so if the board indexes value is 8, then we
+                // draw a BORDER Pixel
+                console.draw_pixel(x + DRAW_OFFSET_X, y + DRAW_OFFSET_Y, &ASSETS[board_value]);
             }
         }
 
@@ -234,7 +245,10 @@ fn main() {
                 let index = to_4x4_rotated_index(x, y, piece.rotation);
                 let piece_index_value = piece.piece_type[index];
 
-                let (draw_x, draw_y) = (x + piece.pos_x, y + piece.pos_y);
+                let (draw_x, draw_y) = (
+                    x + piece.pos_x + DRAW_OFFSET_X,
+                    y + piece.pos_y + DRAW_OFFSET_Y,
+                );
 
                 if piece_index_value != 0 {
                     console.draw_pixel(draw_x, draw_y, &ASSETS[piece_index_value]);
@@ -254,7 +268,7 @@ mod assets {
     pub const EMPTY: Pixel = render::PIXEL_EMPTY;
     pub const BORDER: Pixel = Pixel {
         char_value: '#',
-        attributes: colour::FG_WHITE,
+        attributes: colour::FG_DARK_GREY,
     };
     pub const PIECE_1: Pixel = Pixel {
         char_value: 'A',
@@ -283,9 +297,5 @@ mod assets {
     pub const PIECE_7: Pixel = Pixel {
         char_value: 'G',
         attributes: colour::FG_DARK_YELLOW,
-    };
-    pub const SHADOW: Pixel = Pixel {
-        char_value: render::PIXEL_QUARTER,
-        attributes: colour::FG_DARK_GREY,
     };
 }
