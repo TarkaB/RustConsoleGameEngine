@@ -3,4 +3,5 @@ members = [
     "engine",
     "runner",
     "tetris",
+    "game_of_life",
 ]

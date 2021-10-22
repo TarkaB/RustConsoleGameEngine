@@ -5,3 +5,4 @@ edition = "2018"
 
 [dependencies]
 tetris = { path = "../tetris"}
+game_of_life = { path = "../game_of_life"}
