@@ -112,6 +112,10 @@ pub mod input {
             !self.pressed && !self.held && !self.released
         }
 
+        pub fn is_pressed_or_held(&self) -> bool {
+            self.pressed || self.held
+        }
+
         fn new() -> KeyState {
             KeyState {
                 pressed: false,
