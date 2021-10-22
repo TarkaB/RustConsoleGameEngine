@@ -3,6 +3,8 @@ A basic CLI game engine that handles timing, input and rendering to the Windows 
 
 The engine is simply a set of modules that help you to create simple games; you have to set up your game loop, assets, etc.
 
+There are sample projects in the source code; you can run them by doing `cargo r [game-name]`. 
+
 # Usage
 ## Setup
 The library is not currently on crates.io, so to use it, do the following:
