@@ -114,8 +114,7 @@ impl Piece {
 }
 
 fn to_4x4_rotated_index(x: usize, y: usize, rotation: usize) -> usize {
-    // https://github.com/OneLoneCoder/videos/blob/master/OneLoneCoder_Tetris.cpp
-    // I sort of understand how this works; I can replicate it at different array sizes, at least
+    // https://www.youtube.com/watch?v=8OK8_tHeCIA
     let index = match rotation % 4 {
         ZERO_DEGREES => y * 4 + x,
         NINETY_DEGREES => 12 + y - (x * 4),
