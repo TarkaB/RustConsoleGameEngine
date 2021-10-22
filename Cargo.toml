@@ -3,3 +3,6 @@ members = [
     "engine",
     "tetris",
 ]
+
+[profile.dev]
+overflow-checks = false
