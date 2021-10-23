@@ -5,3 +5,6 @@ members = [
     "tetris",
     "game_of_life",
 ]
+
+[profile.dev]
+overflow-checks = false
