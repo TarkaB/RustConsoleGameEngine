@@ -1,3 +1,5 @@
+**ABANDONED**
+
 # RustConsoleGameEngine
 A basic CLI game engine that handles timing, input and rendering to the Windows terminal; heavily inspired by the olcConsoleGameEngine by Javidx9.
 
@@ -6,15 +8,6 @@ The engine is simply a set of modules that help you to create simple games; you 
 There are sample projects in the source code; you can run them by doing `cargo r [game-name]`. Some names (such as Game of Life) may be abbreviated.
 
 # Usage
-## Setup
-The library is not currently on crates.io, so to use it, do the following:
-- Drag `lib.rs` to your project and either keep it as 'lib' or rename it.
-- Add `win32console = "0.1.4"` and `winsafe = "0.0.5"` to your Cargo.toml. (update versions if necessary)
-
-You can also create a Cargo workspace if you prefer; do it however you like.
-## Game Loop
-The following is an example of a set up routine:
-
 ```
 // SETUP //////////
 // parameters in order: width, height, font_width, font_height, title
@@ -47,5 +40,3 @@ while game_active {
     console.update_screen()?;
 }
 ```
-
-Of course, you can structure your code however you like; this isn't a rule, only a starting place.
